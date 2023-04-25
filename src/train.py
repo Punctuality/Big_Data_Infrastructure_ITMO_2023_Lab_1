@@ -74,7 +74,14 @@ class TrainingData:
         self.y_train = y_train
         self.y_val = y_val
 
-def train_baseline(train_path: str, test_path: str, save_path: Union[None, str] = None) -> tuple[FakeNewsClassifier, TrainingData]:
+
+def train_baseline(
+        config: dict, \
+        train_path: str, \
+        test_path: str, \
+        save_path: Union[None, str] = None
+) -> tuple[FakeNewsClassifier, TrainingData]:
+
     # Load all data and preprocess it
     print("Loading data")
 
@@ -87,7 +94,9 @@ def train_baseline(train_path: str, test_path: str, save_path: Union[None, str] 
 
     from sklearn.model_selection import train_test_split
     x_train, x_val, y_train, y_val = train_test_split(
-        train_corpus, train_data['label'], test_size=0.2, random_state=42
+        train_corpus, train_data['label'],
+        test_size=float(config['training']['train_test_ratio']),
+        random_state=int(config['training']['seed'])
     )
 
     x_train = x_train.copy()
@@ -99,23 +108,28 @@ def train_baseline(train_path: str, test_path: str, save_path: Union[None, str] 
     test_tokens = preprocessing.tokenize(test_corpus)
 
     print("Building vocab")
-    vocab = preprocessing.build_vocab(train_tokens + val_tokens, 5000)
+    vocab = preprocessing.build_vocab(train_tokens + val_tokens, int(config['preprocessing']['vocab_size']))
 
     voc_tokens = preprocessing.vocab_tokens(vocab, train_tokens)
     voc_tokens_val = preprocessing.vocab_tokens(vocab, val_tokens)
     voc_tokens_test = preprocessing.vocab_tokens(vocab, test_tokens)
 
     print("Padding embeddings")
-    padded_tokens = preprocessing.padding_indexes(voc_tokens, 25)
-    padded_tokens_val = preprocessing.padding_indexes(voc_tokens_val, 25)
-    padded_tokens_test = preprocessing.padding_indexes(voc_tokens_test, 25)
+    max_pad_len = int(config['preprocessing']['max_pad_len'])
+    padded_tokens = preprocessing.padding_indexes(voc_tokens, max_pad_len)
+    padded_tokens_val = preprocessing.padding_indexes(voc_tokens_val, max_pad_len)
+    padded_tokens_test = preprocessing.padding_indexes(voc_tokens_test, max_pad_len)
 
     # Setup model
 
     device = device_config.optimal_device()
     print(f"Device of choice: {device}")
 
-    model = FakeNewsClassifier(len(vocab), 40, 100, 2, 0.3).to(device)
+    embedding_dim = int(config['model']['embedding_dim'])
+    hidden_dim = int(config['model']['hidden_dim'])
+    num_layers = int(config['model']['n_layers'])
+    dropout = float(config['model']['dropout'])
+    model = FakeNewsClassifier(len(vocab), embedding_dim, hidden_dim, num_layers, dropout).to(device)
 
     batch_size = 64
     train_dataset = dataset.TokensDataset(padded_tokens, y_train.values, device)
@@ -124,10 +138,12 @@ def train_baseline(train_path: str, test_path: str, save_path: Union[None, str] 
     val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     loss = nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    lr = float(config['training']['lr'])
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     print("Starting training")
-    measure_time(lambda: train(model, train_dataloader, val_dataloader, loss, optimizer, 5), "training")()
+    epochs = int(config['training']['epochs'])
+    measure_time(lambda: train(model, train_dataloader, val_dataloader, loss, optimizer, epochs), "training")()
     model.eval()
 
     if save_path:
