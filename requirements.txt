@@ -1,5 +1,6 @@
 numpy
 scipy
+pytest
 pandas==2.0.1
 scikit-learn
 nltk~=3.8.1
