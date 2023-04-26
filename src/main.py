@@ -7,7 +7,6 @@ import eval
 from model import FakeNewsClassifier
 import device_config
 
-import pickle as pk
 import torch as t
 
 if __name__ == "__main__":

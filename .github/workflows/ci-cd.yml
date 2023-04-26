@@ -9,87 +9,63 @@ on:
       - main
 
 jobs:
-#  dvc_model:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: Checkout repository
-#      uses: actions/checkout@v3
-#
-#    - name: Set up Python
-#      uses: actions/setup-python@v3
-#      with:
-#        python-version: 3.11
-#
-#    - name: Install DVC
-#      run: pip install dvc dvc-s3
-#
-#    - name: Prepare DVC for remote storage
-#      run: |
-#        dvc remote modify --local remote_s3 endpointurl ${{ secrets.DVC_REMOTE_URL }}
-#        dvc remote modify --local remote_s3 access_key_id ${{ secrets.DVC_REMOTE_ACCESS_KEY_ID }}
-#        dvc remote modify --local remote_s3 secret_access_key ${{ secrets.DVC_REMOTE_SECRET_ACCESS_KEY }}
-#
-#    - name: Pull data and model from DVC remote storage
-#      run: dvc pull -r remote_s3
+  run_tests:
+    runs-on: ubuntu-latest
 
-#  run_tests:
-##    needs: dvc_model
-#    runs-on: ubuntu-latest
-#
-#    env:
-#      PYTHONPATH: ${{ github.workspace }}/
-#
-#    steps:
-#    - name: Checkout repository
-#      uses: actions/checkout@v3
-#
-#    - name: Set up Python
-#      uses: actions/setup-python@v3
-#      with:
-#        python-version: 3.11
-#
-#    - name: Install dependencies
-#      run: pip install -r requirements.txt
-#
-#    - name: Run tests
-#      run: pytest
-#
-#  build_docker_image:
-#    needs: run_tests
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: Checkout repository
-#      uses: actions/checkout@v3
-#
-#    - name: Set up Docker
-#      uses: docker/setup-qemu-action@v2
-#
-#    - name: Login to Docker Hub
-#      uses: docker/login-action@v2
-#      with:
-#        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-#        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-#
-#    - name: Get tag or commit
-#      id: tag_or_commit
-#      run: |
-#        if [[ $GITHUB_REF == refs/tags/* ]]; then
-#          echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
-#        else
-#          echo "::set-output name=version::${GITHUB_SHA}"
-#        fi
-#
-#    - name: Build and push Docker image
-#      uses: docker/build-push-action@v3
-#      with:
-#        context: .
-#        push: true
-#        tags: |
-#          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:${{ steps.tag_or_commit.outputs.version }}
-#          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}/
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest
+
+  build_docker_image:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-qemu-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: Get tag or commit
+      id: tag_or_commit
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+        else
+          echo "::set-output name=version::${GITHUB_SHA}"
+        fi
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:${{ steps.tag_or_commit.outputs.version }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
 
   run_docker_image:
-#    needs: build_docker_image
+    needs: build_docker_image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
