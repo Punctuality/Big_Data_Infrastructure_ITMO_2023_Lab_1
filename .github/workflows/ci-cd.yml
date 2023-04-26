@@ -9,6 +9,9 @@ on:
       - main
 
 jobs:
+  env:
+    PYTHONPATH: ${{ PYTHONPATH }}:${{ github.workspace }}/
+
   dvc_model:
     runs-on: ubuntu-latest
     steps:
