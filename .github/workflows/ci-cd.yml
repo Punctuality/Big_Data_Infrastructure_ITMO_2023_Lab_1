@@ -21,12 +21,16 @@ jobs:
         python-version: 3.11
 
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install dvc
+      run: pip install dvc
+
+    - name: Prepare DVC for remote storage
+      run:
+        dvc remote modify --local remote_s3 endpointurl ${{ secrets.DVC_REMOTE_URL }}
+        dvc remote modify --local remote_s3 access_key_id ${{ secrets.DVC_REMOTE_ACCESS_KEY_ID }}
+        dvc remote modify --local remote_s3 secret_access_key ${{ secrets.DVC_REMOTE_SECRET_ACCESS_KEY }}
 
     - name: Pull data and model from DVC remote storage
-      run: dvc pull
+      run: dvc pull -r remote_s3
 
   run_tests:
     needs: dvc_model
