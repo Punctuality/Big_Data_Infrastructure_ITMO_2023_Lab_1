@@ -1,12 +1,7 @@
--f https://download.pytorch.org/whl/cpu
 numpy
 scipy
 pytest
 pandas
 scikit-learn
 nltk
-torch
-torchvision
-torchaudio
-torchtext
 tqdm

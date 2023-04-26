@@ -108,5 +108,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: Docker pull image
+        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
+
       - name: Run Docker-Compose service
         run: docker-compose up fake-news-classifier

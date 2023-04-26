@@ -2,12 +2,13 @@ FROM python:3.11
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY *requirements.txt ./
 
 RUN mkdir /app/data/
 RUN mkdir /app/result/
 
-RUN pip install -r requirements.txt && echo $(pip freeze)
+RUN pip install -r requirements.txt
+RUN pip install -r torch_requirements.txt
 
 RUN mkdir /app/src/
 RUN mkdir /app/test/
