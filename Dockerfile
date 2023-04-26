@@ -10,8 +10,10 @@ RUN mkdir /app/result/
 RUN pip install -r requirements.txt && echo $(pip freeze)
 
 RUN mkdir /app/src/
+RUN mkdir /app/test/
 
 COPY src/* /app/src/
+COPY test/* /app/test/
 COPY docker_config.ini ./config.ini
 
 VOLUME /app/data
