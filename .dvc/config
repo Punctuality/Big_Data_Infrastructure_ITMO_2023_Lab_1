@@ -1,0 +1,6 @@
+[core]
+    autostage = true
+['remote "local_s3"']
+    url = s3://local/data
+['remote "remote_s3"']
+    url = s3://vps/data

@@ -1,0 +1,5 @@
+# Python and Jupyter specific gitignores
+
+# TMP Directory ignore
+
+tmp/
