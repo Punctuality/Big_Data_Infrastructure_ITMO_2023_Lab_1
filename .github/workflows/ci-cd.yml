@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dvc_model:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install dvc
+
+    - name: Pull data and model from DVC remote storage
+      run: dvc pull
+
+  run_tests:
+    needs: dvc_model
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest
+
+  build_docker_image:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-qemu-action@v1
+
+    - name: Build Docker image
+      run: docker build -t fake_news_classificator ./
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker tag my_ml_model ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest

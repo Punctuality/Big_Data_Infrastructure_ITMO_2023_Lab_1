@@ -21,7 +21,7 @@ services:
     image: fake-news-classifier:latest
     container_name: fake-news-classfier
     volumes:
-      - ./tmp/data:/app/data
+      - ./data:/app/data
       - ./tmp/result:/app/result
 
 volumes:
