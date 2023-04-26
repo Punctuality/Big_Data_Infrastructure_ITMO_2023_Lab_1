@@ -18,7 +18,7 @@ services:
     command: server --console-address ":9001" --address ":9000" /data
 
   fake-news-classifier:
-    image: fake-news-classifier:latest
+    image: fake_news_classificator:latest
     container_name: fake-news-classfier
     volumes:
       - ./data:/app/data
