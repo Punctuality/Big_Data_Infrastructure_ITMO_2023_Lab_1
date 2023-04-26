@@ -8,7 +8,6 @@ RUN mkdir /app/data/
 RUN mkdir /app/result/
 
 RUN pip install -r requirements.txt
-RUN pip install -r torch_requirements.txt
 
 RUN mkdir /app/src/
 RUN mkdir /app/test/

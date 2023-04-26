@@ -1,4 +1,0 @@
--i https://download.pytorch.org/whl/cpu
-torchtext==0.15.0
-torch
-torchaudio
