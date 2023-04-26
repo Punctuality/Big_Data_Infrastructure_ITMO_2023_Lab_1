@@ -73,13 +73,22 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+    - name: Get tag or commit
+      id: tag_or_commit
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+        else
+          echo "::set-output name=version::${GITHUB_SHA}"
+        fi
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:${{ github.ref_name }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:${{ steps.tag_or_commit.outputs.version }}
           ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
 
   run_docker_image:
