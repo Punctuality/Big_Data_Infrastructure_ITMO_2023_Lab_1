@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PYTHONPATH: ${{ PYTHONPATH }}:${{ github.workspace }}/
+      PYTHONPATH: ${{ github.workspace }}/
 
     steps:
     - name: Checkout repository
