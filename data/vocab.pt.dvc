@@ -1,0 +1,4 @@
+outs:
+- md5: 3a57a955fa51f4985d832f28d324efd5
+  size: 78635
+  path: vocab.pt
