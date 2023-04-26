@@ -7,5 +7,5 @@ nltk
 torch
 torchvision
 torchaudio
-torchtext==0.15.0
+torchtext==0.15.1
 tqdm
