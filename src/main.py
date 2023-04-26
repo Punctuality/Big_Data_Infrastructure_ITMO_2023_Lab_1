@@ -1,22 +1,31 @@
+import argparse
 import configparser
 import os
 
 import train
 import eval
 from model import FakeNewsClassifier
-from src import device_config
+import device_config
 
 import pickle as pk
 import torch as t
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Define config path')
+    parser.add_argument('--config_path', type=str, help='path to INI config file', required=True)
+    args = parser.parse_args()
+
     print(f"Workdir: {os.getcwd()}")
 
-    device = device_config.optimal_device()
-    print(f"Device of choice: {device}")
 
     config = configparser.ConfigParser()
-    config.read('../config.ini')
+    config.read(args.config_path)
+
+    if config.get('system', 'device'):
+        device = t.device(config['system']['device'])
+    else:
+        device = device_config.optimal_device()
+    print(f"Device of choice: {device}")
 
     model_path = config['paths']['model_path']
     vocab_path = config['paths']['vocab_path']

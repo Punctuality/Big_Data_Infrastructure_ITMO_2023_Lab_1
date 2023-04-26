@@ -1,0 +1,21 @@
+FROM python:3.11
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+
+RUN mkdir /app/data/
+RUN mkdir /app/result/
+
+RUN pip install -r requirements.txt && echo $(pip freeze)
+
+RUN mkdir /app/src/
+
+COPY src/* /app/src/
+COPY docker_config.ini ./config.ini
+
+VOLUME /app/data
+VOLUME /app/result
+
+
+CMD ["python", "src/main.py", "--config_path", "/app/config.ini"]

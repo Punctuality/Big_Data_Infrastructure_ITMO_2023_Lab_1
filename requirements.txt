@@ -1,11 +1,11 @@
 numpy
 scipy
 pytest
-pandas==2.0.1
+pandas
 scikit-learn
-nltk~=3.8.1
-torch~=2.0.0
+nltk
+torch
 torchvision
 torchaudio
-torchtext~=0.15.1
-tqdm~=4.65.0
+torchtext==0.15.0
+tqdm
