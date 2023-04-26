@@ -24,7 +24,7 @@ jobs:
       run: pip install dvc
 
     - name: Prepare DVC for remote storage
-      run:
+      run: |
         dvc remote modify --local remote_s3 endpointurl ${{ secrets.DVC_REMOTE_URL }}
         dvc remote modify --local remote_s3 access_key_id ${{ secrets.DVC_REMOTE_ACCESS_KEY_ID }}
         dvc remote modify --local remote_s3 secret_access_key ${{ secrets.DVC_REMOTE_SECRET_ACCESS_KEY }}
