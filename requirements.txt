@@ -1,3 +1,4 @@
+-f https://download.pytorch.org/whl/cpu
 numpy
 scipy
 pytest
@@ -7,5 +8,5 @@ nltk
 torch
 torchvision
 torchaudio
-torchtext==0.15.1
+torchtext
 tqdm
