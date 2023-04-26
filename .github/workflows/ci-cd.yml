@@ -21,7 +21,7 @@ jobs:
         python-version: 3.11
 
     - name: Install dependencies
-      run: pip install dvc
+      run: pip install dvc dvc-s3
 
     - name: Prepare DVC for remote storage
       run: |
