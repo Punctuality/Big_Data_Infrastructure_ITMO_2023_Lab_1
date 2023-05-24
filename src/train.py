@@ -14,6 +14,7 @@ from model import *
 import dataset
 import device_config
 
+import logging as log
 
 def accuracy(model, test_dataloader):
     model.eval()
@@ -28,7 +29,7 @@ def accuracy(model, test_dataloader):
 
 
 def train(model, dataloader, val_dataloader, loss, optimizer, epochs):
-    print(f"Staring acc_train: {accuracy(model, dataloader)} acc_val: {accuracy(model, val_dataloader)}")
+    log.debug(f"Staring acc_train: {accuracy(model, dataloader)} acc_val: {accuracy(model, val_dataloader)}")
 
     val_acc = 0
     for epoch in range(epochs):
@@ -46,9 +47,9 @@ def train(model, dataloader, val_dataloader, loss, optimizer, epochs):
         train_acc = accuracy(model, dataloader)
         val_acc = accuracy(model, val_dataloader)
 
-        print(f"Epoch {epoch + 1} loss: {l.item()} acc_train: {train_acc} acc_val: {val_acc}")
+        log.debug(f"Epoch {epoch + 1} loss: {l.item()} acc_train: {train_acc} acc_val: {val_acc}")
 
-    print(f"Final accuracy: {val_acc}")
+    log.debug(f"Final accuracy: {val_acc}")
 
 
 def measure_time(callable, name):
@@ -56,7 +57,7 @@ def measure_time(callable, name):
         start = time.time()
         result = callable()
         end = time.time()
-        print(f"Time elapsed ({name}): {end - start}")
+        log.debug(f"Time elapsed ({name}): {end - start}")
         return result
 
     return wrapper
@@ -88,7 +89,7 @@ def train_baseline(
 ) -> tuple[FakeNewsClassifier, TrainingData]:
 
     # Load all data and preprocess it
-    print("Loading data")
+    log.debug("Loading data")
 
     train_path = config['paths']['train_path']
     train_data = corpus.read_dataframe(train_path)
@@ -100,22 +101,22 @@ def train_baseline(
         random_state=int(config['training']['seed'])
     )
 
-    print("Extracting corpus")
+    log.debug("Extracting corpus")
 
     train_corpus = corpus.load_corpus(x_train)
     val_corpus = corpus.load_corpus(x_val)
 
-    print("Tokenizing corpus")
+    log.debug("Tokenizing corpus")
     train_tokens = preprocessing.tokenize(train_corpus)
     val_tokens = preprocessing.tokenize(val_corpus)
 
-    print("Building vocab")
+    log.debug("Building vocab")
     vocab = preprocessing.build_vocab(train_tokens + val_tokens, int(config['preprocessing']['vocab_size']))
 
     voc_tokens = preprocessing.vocab_tokens(vocab, train_tokens)
     voc_tokens_val = preprocessing.vocab_tokens(vocab, val_tokens)
 
-    print("Padding embeddings")
+    log.debug("Padding embeddings")
     max_pad_len = int(config['preprocessing']['max_pad_len'])
     padded_tokens = preprocessing.padding_indexes(voc_tokens, max_pad_len)
     padded_tokens_val = preprocessing.padding_indexes(voc_tokens_val, max_pad_len)
@@ -138,7 +139,7 @@ def train_baseline(
     lr = float(config['training']['lr'])
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    print("Starting training")
+    log.debug("Starting train loop")
     epochs = int(config['training']['epochs'])
     measure_time(lambda: train(model, train_dataloader, val_dataloader, loss, optimizer, epochs), "training")()
     model.eval()
