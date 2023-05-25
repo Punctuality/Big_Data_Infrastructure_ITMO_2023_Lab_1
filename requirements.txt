@@ -1,6 +1,7 @@
 numpy
 scipy
 pytest
+pytest-cov
 pandas
 scikit-learn
 nltk

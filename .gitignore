@@ -4,6 +4,7 @@
 .vscode/
 .ipynb_checkpoints/
 __pycache__/
+.pytest_cache/
 
 # TMP Directory ignore
 
