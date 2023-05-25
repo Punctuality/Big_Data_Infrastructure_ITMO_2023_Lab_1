@@ -67,6 +67,9 @@ jobs:
   run_docker_image:
     needs: build_docker_image
     runs-on: ubuntu-latest
+    env:
+      LOG_LEVEL: DEBUG
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
