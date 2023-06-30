@@ -6,7 +6,7 @@
 
 **Вариант:** Fake-News Classification (#22)
 
-**Репозиторий с исходным кодом:** [Репозиторий](https://github.com/Punctuality/Evolutionary_Algorithm_ITMO_2023)
+**Репозиторий с исходным кодом:** [Репозиторий](https://github.com/Punctuality/Big_Data_Infrastructure_ITMO_2023_Lab_1)
 
 **Статус автоматической проверки:** [![CI/CD Pipeline](https://github.com/Punctuality/Big_Data_Infrastructure_ITMO_2023_Lab_1/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/Punctuality/Big_Data_Infrastructure_ITMO_2023_Lab_1/actions/workflows/ci-cd.yml)
 
